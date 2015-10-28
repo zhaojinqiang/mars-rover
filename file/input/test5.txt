@@ -1,0 +1,5 @@
+5 5
+1 2 S
+MMMMM
+3 3 E
+MMRMMRMRRM

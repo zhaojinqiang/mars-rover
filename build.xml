@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="GB2312"?>
+<project name="Mars" default="archive" basedir=".">
+
+	<property name="src" value="${basedir}/src" />
+	<property name="script" value="${basedir}/script" />
+	<property name="lib" value="${basedir}/lib" />
+	<property name="file" value="${basedir}/file" />
+	
+	<property name="build" value="${basedir}/build" />
+	<property name="build.src" value="${build}/src" />
+	<property name="build.classes" value="${build}/classes" />
+	<property name="build.jar" value="${build}/jar" />
+	
+	<property name="build.zip" value="${build}/zip" />
+	
+	<property name="build.zip.bin" value="${build.zip}/Mars/bin" />	
+	<property name="build.zip.lib" value="${build.zip}/Mars/lib" />
+	<property name="build.zip.file" value="${build.zip}/Mars/file" />
+
+	<path id="classpath">
+		<fileset dir="${lib}">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+	
+	<target name="clean" description="clean the build directory">
+		<echo>clean directories for initialization</echo>
+		<delete dir="${build}" />				
+	</target>
+	
+	<target name="prepare" depends="clean" description="prepare the output directory">
+		<echo>make directories for building</echo>
+		<mkdir dir="${build}" />		
+		<mkdir dir="${build.src}" />
+		<mkdir dir="${build.classes}" />
+		<mkdir dir="${build.jar}" />		
+		
+		<mkdir dir="${build.zip}" />
+		
+		<mkdir dir="${build.zip.bin}" />		
+		<mkdir dir="${build.zip.lib}" />
+		<mkdir dir="${build.zip.file}" />
+	</target>
+	<target name="compile" depends="prepare" description="compile the Java source.">
+		<echo>copy source code...</echo>
+		<copy todir="${build.src}">
+			<fileset dir="${src}">
+				<include name="**/*.java" />
+				<exclude name="**/Test*.java" />
+			</fileset>
+		</copy>
+		
+		<echo>compiling...</echo>
+		<javac source="1.5" srcdir="${build.src}" destdir="${build.classes}" optimize="true">
+			<classpath refid="classpath" />
+		</javac>
+	</target>
+	<target name="package" depends="compile" description="package all the Java classes into a Jar.">
+		<echo>packaging...</echo>
+		<jar destfile="${build.jar}/Mars.jar" basedir="${build.classes}">
+			<manifest>
+				<attribute name="Main-Class" value="com.tw.Main" />
+				<attribute name="Class-Path" value="." />
+			</manifest>
+		</jar>
+		<echo>cleanup temporary files and directories</echo>
+		<delete dir="${build.src}" />
+		<delete dir="${build.classes}" />
+	</target>
+	<target name="archive" depends="package" description="zip all resources.">
+		<echo>archiving...</echo>
+		<copy todir="${build.zip.bin}">
+			<fileset dir="${script}" />
+		</copy>
+		
+		<copy todir="${build.zip.file}">
+					<fileset dir="${file}" />
+				</copy>
+		
+		<copy todir="${build.zip.lib}" file="${build.jar}/Mars.jar">			
+		</copy>
+		
+		<zip destfile="${build}/Mars.zip" basedir="${build.zip}">
+		</zip>
+		
+		<delete dir="${build.zip}" />
+		<delete dir="${build.jar}" />
+	</target>
+
+</project>

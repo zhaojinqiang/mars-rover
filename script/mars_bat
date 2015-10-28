@@ -1,0 +1,15 @@
+set classpath= .;../lib/Mars.jar;
+
+if exist ../../jdk/jre/bin/javaw.exe goto innerJRE
+if not exist ../../jdk/jre/bin/javaw.exe goto sysJRE
+
+:sysJRE
+ echo 222
+ start "mars rover"  java.exe com.tw.Main
+
+goto end
+:innerJRE 
+ echo 111
+ start "mars rover" ../../jdk/jre/bin/java.exe com.tw.Main
+goto end
+:end
